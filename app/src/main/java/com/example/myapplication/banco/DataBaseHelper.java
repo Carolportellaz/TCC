@@ -17,8 +17,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static String column_exemplo = "exemplo";
 
     // AQUI A GENTE PASSA OS DADOS DO BANCO //
+
     public DataBaseHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, "TCC", null, 1);
+        super(context, name, null, 1);
     }
 
     // QUANDO CHAMAMOS PELA PRIMEIRA VEZ, IGUAL O ON CREATE DO ANDROID //
@@ -26,23 +27,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // CRIANDO A TABELA //
         String createTableStatement = "CREATE TABLE " + tbMainQ + " (" + column_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " + column_texto + " VARCHAR(100), " + column_exemplo + " VARCHAR(100))";
-        db.execSQL(createTableStatement);
-    }
+            db.execSQL(createTableStatement);
+
+            try{
+                addPerguntas(db);
+            }
+
+            catch (Exception e){
+                System.out.println("Ocorreu o seguinte erro ao tentar adicionar " + e.getMessage());
+            }
+
+}
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
 
-    public void addPeerguntas(){
+    public void addPerguntas(SQLiteDatabase db){
         MainQuestion main1 = new MainQuestion(1, "TESTE", "TESTE");
+        System.out.println("-------------");
+        System.out.println(add(main1, db));
 
-        System.out.println(add(main1));
+
     }
 
-    public boolean add(MainQuestion mainQ){
-        SQLiteDatabase db = this.getWritableDatabase();
-
+    public boolean add(MainQuestion mainQ, SQLiteDatabase db){
         ContentValues cv = new ContentValues();
         cv.put(column_id, mainQ.getId());
         cv.put(column_texto, mainQ.getTexto());
